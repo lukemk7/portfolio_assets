@@ -1,22 +1,27 @@
-// scripts/calloutObserver.js
+function observeCalloutById(blockId) {
+  const blockEl = document.getElementById(blockId);
 
-function observeCalloutById(blockId, threshold = 0.5) {
-  const el = document.querySelector(`#${blockId} .notion-callout__content`);
-  if (!el) return;
+  if (!blockEl) {
+    console.warn(`Element with ID ${blockId} not found.`);
+    return;
+  }
 
-  const observer = new IntersectionObserver((entries, obs) => {
+  const wrapper = blockEl.querySelector('.callout-wrapper');
+  if (!wrapper) {
+    console.warn(`.callout-wrapper not found within ${blockId}.`);
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('in-view');
-        obs.unobserve(entry.target);
+        observer.unobserve(entry.target);
       }
     });
   }, {
-    threshold: threshold,
+    threshold: 0.5,
   });
 
-  observer.observe(el);
+  observer.observe(wrapper);
 }
-
-// Example usage:
-// observeCalloutById('block-abc123');
