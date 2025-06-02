@@ -1,27 +1,20 @@
-function observeCalloutById(blockId) {
-  const blockEl = document.getElementById(blockId);
+function initCalloutAnimation() {
+    // Clean up any previously injected script
+    document.querySelectorAll('script[src*="calloutObserver.js"]').forEach(script => script.remove());
 
-  if (!blockEl) {
-    console.warn(`Element with ID ${blockId} not found.`);
-    return;
+    // Inject fresh script
+    const script = document.createElement('script');
+    script.src = "https://lukemk7.github.io/portfolio_assets/scripts/calloutObserver.js";
+    script.onload = () => {
+      observeCalloutById("block-204462bfe5cb80c6a76ffc96f92d10ab"); // use the ID of your .super-embed
+    };
+    document.body.appendChild(script);
   }
 
-  const wrapper = blockEl.querySelector('.callout-wrapper');
-  if (!wrapper) {
-    console.warn(`.callout-wrapper not found within ${blockId}.`);
-    return;
-  }
+  // Run on first load
+  initCalloutAnimation();
 
-  const observer = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('in-view');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, {
-    threshold: 0.5,
+  // Re-run on every internal Super page load
+  window.addEventListener('super:load', () => {
+    initCalloutAnimation();
   });
-
-  observer.observe(wrapper);
-}
